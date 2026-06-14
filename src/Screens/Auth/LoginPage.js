@@ -1,3 +1,4 @@
+// screens/auth/LoginScreen.jsx
 import React, { useState } from "react";
 import {
   View,
@@ -6,28 +7,43 @@ import {
   TouchableOpacity,
   StyleSheet,
   StatusBar,
+  Alert,          
+  ActivityIndicator
 } from "react-native";
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  Feather
-} from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import useAuthStore from "../../Context/authStore"; 
 
 const LoginPage = ({ navigation }) => {
-  const [emailAddress, setEmailAddress] = useState("");
-  const [password, setPassword] = useState("");
+  const { login, isLoading } = useAuthStore();
+  const [emailAddress, setEmailAddress]     = useState("");
+  const [password, setPassword]             = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const onLoginPress = () => {
-    // Add your login logic here
-    navigation.replace("Home");
+  // ✅ removed onLoginPress entirely — it was a placeholder with hardcoded navigation
+
+  const handleLogin = async () => {
+    if (!emailAddress || !password) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+    try {
+      await login(emailAddress.trim().toLowerCase(), password);
+      // ✅ no navigation.navigate() needed here
+      // RootNavigator watches user in the store — switches to HomeScreen automatically
+    } catch (error) {
+      console.log(error);
+      const message =
+        error.response?.data?.message || "Login failed. Please try again.";
+      Alert.alert("Login Failed", message);
+    }
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="light-content" />
       <View style={styles.container}>
+
         {/* Back Button */}
         <TouchableOpacity
           style={styles.backButton}
@@ -74,11 +90,8 @@ const LoginPage = ({ navigation }) => {
             placeholderTextColor="#9AA0A6"
             secureTextEntry={!isPasswordVisible}
           />
-
           <TouchableOpacity
-            onPress={() =>
-              setIsPasswordVisible((prev) => !prev)
-            }
+            onPress={() => setIsPasswordVisible((prev) => !prev)}
             style={styles.eyeIconContainer}
           >
             <Feather
@@ -91,31 +104,29 @@ const LoginPage = ({ navigation }) => {
 
         {/* Forgot Password */}
         <TouchableOpacity style={styles.forgotPasswordContainer}>
-          <Text style={styles.forgotPasswordText}>
-            Forget Password?
-          </Text>
+          <Text style={styles.forgotPasswordText}>Forget Password?</Text>
         </TouchableOpacity>
 
         {/* Login Button */}
         <TouchableOpacity
-          onPress={onLoginPress}
-          style={styles.loginButton}
+          onPress={handleLogin}
+          style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
+          disabled={isLoading}   // ✅ prevent double-tap while request is in flight
         >
-          <Text style={styles.loginButtonText}>Login</Text>
+          {isLoading
+            ? <ActivityIndicator color="#FFFFFF" />
+            : <Text style={styles.loginButtonText}>Login</Text>
+          }
         </TouchableOpacity>
 
         {/* Sign Up */}
         <View style={styles.signupContainer}>
-          <Text style={styles.signupText}>
-            Create New Account?
-          </Text>
-
-          <TouchableOpacity
-            onPress={() => navigation.navigate("SignUp")}
-          >
+          <Text style={styles.signupText}>Create New Account?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
             <Text style={styles.signupLink}> Sign up</Text>
           </TouchableOpacity>
         </View>
+
       </View>
     </SafeAreaView>
   );
@@ -182,6 +193,9 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     marginVertical: 15,
+  },
+  loginButtonDisabled: {
+    opacity: 0.6,       // ✅ visual feedback when loading
   },
   loginButtonText: {
     color: "#FFFFFF",

@@ -2,6 +2,12 @@
   "expo": {
     "name": "expo-docs-frontend",
     "slug": "expo-docs-frontend",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "plugins": [
+      "expo-secure-store"
+    ],
+    "android": {
+      "package": "com.aayush_patel.expodocsfrontend"
+    }
   }
 }
