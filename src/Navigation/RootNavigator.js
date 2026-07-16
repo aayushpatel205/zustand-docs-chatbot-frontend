@@ -11,7 +11,8 @@ import LoginPage from "../Screens/Auth/LoginPage";
 import SignUpPage from "../Screens/Auth/SignUpPage";
 
 // Main screens
-import HomePage from "../Screens/Mains/HomePage";
+import LandingPage from "../Screens/Mains/LandingPage";
+import ChatPage from "../Screens/Mains/ChatPage";
 
 const Stack = createNativeStackNavigator();
 
@@ -38,8 +39,8 @@ const RootNavigator = () => {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {user ? (
           <>
-            <Stack.Screen name="Home" component={HomePage} />
-            {/* Add more protected screens here */}
+            <Stack.Screen name="Landing" component={LandingPage} />
+            <Stack.Screen name="Chat" component={ChatPage} />
           </>
         ) : (
           <>
