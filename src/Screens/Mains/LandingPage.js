@@ -8,6 +8,7 @@ import {
   StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Entypo } from "@expo/vector-icons";
 import useAuthStore from "../../Context/authStore";
 
 const WELCOME_INFO = [
@@ -24,14 +25,8 @@ const LandingPage = ({ navigation }) => {
       <StatusBar barStyle="light-content" />
 
       <View style={styles.header}>
-        <View style={styles.iconButton} />
-
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={logout}
-          accessibilityLabel="Logout"
-        >
-          <Text style={{ color: "#FFF", fontSize: 12, fontWeight: "600" }}>Logout</Text>
+        <TouchableOpacity onPress={logout} accessibilityLabel="Logout">
+          <Entypo name="log-out" size={22} color="white" />
         </TouchableOpacity>
       </View>
 
@@ -68,7 +63,7 @@ const styles = StyleSheet.create({
 
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingTop: 10,
@@ -79,15 +74,6 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "600",
-  },
-
-  iconButton: {
-    backgroundColor: "#2C2C2E",
-    width: 60,
-    height: 40,
-    borderRadius: 14,
-    justifyContent: "center",
-    alignItems: "center",
   },
 
   content: {

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { queryChat } from "../Service/chatService.js";
+import buildHistory from "../Helpers/buildHistory.js";
 
 let messageId = 0;
 const nextId = () => `msg_${++messageId}`;
@@ -16,6 +17,8 @@ const useChatStore = create((set, get) => ({
       text: question,
     };
 
+    const history = buildHistory(get().messages);
+
     set((state) => ({
       messages: [...state.messages, userMessage],
       isLoading: true,
@@ -23,7 +26,7 @@ const useChatStore = create((set, get) => ({
     }));
 
     try {
-      const { answer, sources } = await queryChat(question);
+      const { answer, sources } = await queryChat(question, history);
 
       const assistantMessage = {
         id: nextId(),
